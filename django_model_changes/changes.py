@@ -102,7 +102,13 @@ class ChangesMixin(object):
         field_names = set()
         [field_names.add(f.name) for f in self._meta.local_fields]
         [field_names.add(f.attname) for f in self._meta.local_fields]
-        return dict([(field_name, getattr(self, field_name)) for field_name in field_names])
+        d = {}
+        for field_name in field_names:
+            try:
+                d[field_name] = getattr(self, field_name)
+            except Exception as e:
+                d[field_name] = None
+        return d
 
     def previous_state(self):
         """
